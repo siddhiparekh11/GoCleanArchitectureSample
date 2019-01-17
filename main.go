@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"net/http"
 	"log"
+	"reflect"
 	
 
 )
@@ -36,7 +37,7 @@ func init() {
 }
 
 
-
+var dObj delivery.AuthorHandler
 
 func main() {
 
@@ -53,12 +54,14 @@ func main() {
 	app.Conn = conn
 
 	aRepo := repository.NewAuthorRepository(app.Conn)
+	fmt.Println(reflect.TypeOf(aRepo))
 	aContr := controller.NewAuthorController(aRepo)
 	delivery.NewAuthorHandler(app.Router,app.Conn,aContr)
-
 	log.Fatal(http.ListenAndServe(":8000",app.Router))
 
 }
+
+
 
 
 func dbConnect() (*sql.DB,error) {

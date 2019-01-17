@@ -11,6 +11,7 @@ import (
 	"github.com/siddhiparekh11/GoChallenge/interfaces"
 	_ "github.com/go-sql-driver/mysql"
 	"database/sql"
+	"fmt"
 )
 
 
@@ -21,7 +22,7 @@ type IAuthorHandlers interface {
 
 type AuthorHandler struct {
 
-	mux *mux.Router
+	Mux *mux.Router
 	conn *sql.DB
 	IAuthorHandlers
 	aContr interfaces.IAuthor
@@ -29,15 +30,17 @@ type AuthorHandler struct {
 }
 
 
-func NewAuthorHandler(m *mux.Router,con *sql.DB, aCon interfaces.IAuthor) {
+func NewAuthorHandler(m *mux.Router,con *sql.DB, aCon interfaces.IAuthor) (*AuthorHandler) {
 
 	authorHandler := &AuthorHandler {
-		mux : m,
+		Mux : m,
 		conn: con,
 		aContr: aCon,
 	}
 
-	authorHandler.mux.HandleFunc("/api/authors",authorHandler.GetAuthors).Methods("GET")
+	authorHandler.Mux.HandleFunc("/api/authors",authorHandler.GetAuthors).Methods("GET")
+
+	return authorHandler
 
 
 
@@ -46,6 +49,8 @@ func NewAuthorHandler(m *mux.Router,con *sql.DB, aCon interfaces.IAuthor) {
 
 func (authorHandler *AuthorHandler) GetAuthors(w http.ResponseWriter, r *http.Request)  {
 
+	fmt.Println("I am called")
+	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type","application/json")
 	authors, err := authorHandler.aContr.GetAuthors(context.Background())
 	if err != nil {
